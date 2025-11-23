@@ -242,7 +242,7 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="border-t border-slate-200/70 bg-[#faf7ef]">
         <div className="mx-auto max-w-5xl px-4 py-4 text-xs text-slate-500 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-          <span>Built with Next.js + OpenAlex + OpenAI.</span>
+          <span>Built with Next.js + OpenAlex.</span>
           <span>
             Summaries may be imperfect, always read the original paper.
           </span>
