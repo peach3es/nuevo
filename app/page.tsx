@@ -2,6 +2,14 @@
 
 import { FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Copy, Check } from "lucide-react";
+
 import type { Paper } from "@/types/paper";
 
 export default function HomePage() {
@@ -48,6 +56,35 @@ export default function HomePage() {
     } catch {
       // ignore for now
     }
+  }
+
+  function CopyButton({ value }: { value: string }) {
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = async () => {
+      try {
+        await copyToClipboard(value);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1500); // back to copy after 1.5s
+      } catch (e) {
+        console.error("Failed to copy", e);
+      }
+    };
+
+    return (
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        onClick={handleCopy}
+        className="absolute right-2 top-2 h-7 w-7 p-0 text-slate-500 hover:text-slate-900 hover:bg-slate-100"
+      >
+        {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+        <span className="sr-only">
+          {copied ? "Copied to clipboard" : "Copy to clipboard"}
+        </span>
+      </Button>
+    );
   }
 
   return (
@@ -181,55 +218,57 @@ export default function HomePage() {
                       </p>
                     )}
 
-                    {/* Citations */}
-                    <details className="mt-4 group">
-                      <summary className="cursor-pointer text-xs font-medium text-slate-700 flex items-center gap-1">
-                        <span className="group-open:rotate-90 transition-transform">
-                          ▶
-                        </span>
-                        Citations
-                      </summary>
-                      <div className="mt-2 space-y-3 text-xs">
-                        {paper.apaCitation && (
-                          <div>
-                            <div className="mb-1 flex items-center justify-between">
-                              <span className="font-semibold">APA</span>
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  copyToClipboard(paper.apaCitation!)
-                                }
-                                className="text-[11px] text-slate-500 hover:text-slate-800"
-                              >
-                                Copy
-                              </button>
+                    {(paper.apaCitation || paper.bibtexCitation) && (
+                      <Accordion
+                        type="single"
+                        collapsible
+                        className="mt-4 rounded-xl px-3 bg-slate-100"
+                      >
+                        <AccordionItem value={`citations-${paper.id}`}>
+                          <AccordionTrigger className="text-xs font-semibold text-slate-700 px-0 items-center">
+                            <span className="leading-none">Citations</span>
+                            <span className="ml-auto mr-1 text-[11px] font-normal text-slate-500 leading-none">
+                              Tap to expand
+                            </span>
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <div className="space-y-3 text-xs">
+                              {paper.apaCitation && (
+                                <div>
+                                  <div className="mb-1 flex items-center justify-between">
+                                    <span className="font-semibold">APA</span>
+                                  </div>
+
+                                  <div className="relative">
+                                    <div className="rounded-md bg-white px-3 py-2 text-[11px] leading-relaxed pr-10">
+                                      {paper.apaCitation}
+                                    </div>
+                                    <CopyButton value={paper.apaCitation!} />
+                                  </div>
+                                </div>
+                              )}
+
+                              {paper.bibtexCitation && (
+                                <div>
+                                  <div className="mb-1 flex items-center justify-between">
+                                    <span className="font-semibold">
+                                      BibTeX
+                                    </span>
+                                  </div>
+
+                                  <div className="relative">
+                                    <pre className="rounded-md bg-white px-3 py-2 text-[11px] leading-relaxed overflow-x-auto pr-10">
+                                      {paper.bibtexCitation}
+                                    </pre>
+                                    <CopyButton value={paper.bibtexCitation!} />
+                                  </div>
+                                </div>
+                              )}
                             </div>
-                            <p className="rounded-md bg-slate-50 px-3 py-2 text-[11px] leading-relaxed">
-                              {paper.apaCitation}
-                            </p>
-                          </div>
-                        )}
-                        {paper.bibtexCitation && (
-                          <div>
-                            <div className="mb-1 flex items-center justify-between">
-                              <span className="font-semibold">BibTeX</span>
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  copyToClipboard(paper.bibtexCitation!)
-                                }
-                                className="text-[11px] text-slate-500 hover:text-slate-800"
-                              >
-                                Copy
-                              </button>
-                            </div>
-                            <pre className="rounded-md bg-slate-50 px-3 py-2 text-[11px] leading-relaxed overflow-x-auto">
-                              {paper.bibtexCitation}
-                            </pre>
-                          </div>
-                        )}
-                      </div>
-                    </details>
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
+                    )}
                   </article>
                 ))}
               </div>
