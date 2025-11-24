@@ -264,7 +264,7 @@ export default function HomePage() {
                                 Citations
                               </span>
                               <span className="ml-auto mr-1 text-[11px] font-normal text-slate-500 leading-none">
-                                Tap to expand
+                                Expand
                               </span>
                             </AccordionTrigger>
                             <AccordionContent>
