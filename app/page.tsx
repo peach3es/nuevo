@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Accordion,
@@ -62,12 +62,31 @@ export default function HomePage() {
 
   function CopyButton({ value }: { value: string }) {
     const [copied, setCopied] = useState(false);
+    const timeoutRef = useRef<number | null>(null);
+
+    useEffect(() => {
+      // cleanup when the button unmounts
+      return () => {
+        if (timeoutRef.current !== null) {
+          window.clearTimeout(timeoutRef.current);
+        }
+      };
+    }, []);
 
     const handleCopy = async () => {
       try {
         await copyToClipboard(value);
         setCopied(true);
-        setTimeout(() => setCopied(false), 1500); // back to copy after 1.5s
+
+        // clear any existing timeout so we don't stack them
+        if (timeoutRef.current !== null) {
+          window.clearTimeout(timeoutRef.current);
+        }
+
+        timeoutRef.current = window.setTimeout(() => {
+          setCopied(false);
+          timeoutRef.current = null;
+        }, 1500);
       } catch (e) {
         console.error("Failed to copy", e);
       }
