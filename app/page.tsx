@@ -159,25 +159,24 @@ export default function HomePage() {
                           {paper.authors.join(", ") || "Unknown authors"}
                           {paper.year && (
                             <>
-                              {" "}
-                              · <span>{paper.year}</span>
+                              , <span>{paper.year}</span>
                             </>
                           )}
                           {paper.venue && (
                             <>
                               {" "}
-                              · <span className="italic">{paper.venue}</span>
+                              | <span className="italic">{paper.venue}</span>
                             </>
                           )}
                         </p>
                       </div>
-                      <span className="mt-1 inline-flex h-6 items-center rounded-full border border-slate-200 px-2 text-[11px] uppercase tracking-wide text-slate-500 bg-slate-50">
+                      <span className="mt-1 inline-flex items-center rounded-full border border-slate-200 px-2 py-0.5 text-[10px] sm:text-[11px] uppercase tracking-wide text-slate-500 bg-slate-50 whitespace-nowrap">
                         Abstract-based summary
                       </span>
                     </div>
 
                     {paper.summary && (
-                      <p className="mt-3 text-sm text-slate-700 leading-relaxed">
+                      <p className="mt-3 text-sm text-slate-700 leading-relaxed text-justify">
                         {paper.summary}
                       </p>
                     )}
