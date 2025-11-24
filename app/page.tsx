@@ -1,7 +1,17 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Copy, Check } from "lucide-react";
+
 import type { Paper } from "@/types/paper";
 
 export default function HomePage() {
@@ -49,6 +59,56 @@ export default function HomePage() {
       // ignore for now
     }
   }
+
+  function CopyButton({ value }: { value: string }) {
+    const [copied, setCopied] = useState(false);
+    const timeoutRef = useRef<number | null>(null);
+
+    useEffect(() => {
+      // cleanup when the button unmounts
+      return () => {
+        if (timeoutRef.current !== null) {
+          window.clearTimeout(timeoutRef.current);
+        }
+      };
+    }, []);
+
+    const handleCopy = async () => {
+      try {
+        await copyToClipboard(value);
+        setCopied(true);
+
+        // clear any existing timeout so we don't stack them
+        if (timeoutRef.current !== null) {
+          window.clearTimeout(timeoutRef.current);
+        }
+
+        timeoutRef.current = window.setTimeout(() => {
+          setCopied(false);
+          timeoutRef.current = null;
+        }, 1500);
+      } catch (e) {
+        console.error("Failed to copy", e);
+      }
+    };
+
+    return (
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        onClick={handleCopy}
+        className="absolute right-2 top-2 h-7 w-7 p-0 text-slate-500 hover:text-slate-900 hover:bg-slate-100"
+      >
+        {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+        <span className="sr-only">
+          {copied ? "Copied to clipboard" : "Copy to clipboard"}
+        </span>
+      </Button>
+    );
+  }
+
+  const skeletonItems = Array.from({ length: 3 });
 
   return (
     <div className="min-h-screen bg-[#faf7ef] text-slate-900 flex flex-col">
@@ -127,12 +187,12 @@ export default function HomePage() {
         </section>
 
         {/* Results */}
-        {papers.length > 0 && (
+        {(isLoading || papers.length > 0) && (
           <section className="border-t border-slate-200/70 bg-white/60">
             <div className="mx-auto max-w-5xl px-4 py-8">
               <div className="flex items-baseline justify-between mb-4">
                 <h2 className="text-lg font-semibold tracking-tight">
-                  Results ({papers.length})
+                  {isLoading ? "Searching..." : `Results (${papers.length})`}
                 </h2>
                 <p className="text-xs text-slate-500">
                   Summaries are based on abstracts, not full papers.
@@ -140,99 +200,134 @@ export default function HomePage() {
               </div>
 
               <div className="space-y-5">
-                {papers.map((paper) => (
-                  <article
-                    key={paper.id}
-                    className="rounded-2xl border border-slate-200 bg-white/70 px-4 py-4 md:px-5 md:py-5 shadow-sm"
-                  >
-                    <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
-                      <div>
-                        <a
-                          href={paper.url || "#"}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-base md:text-lg font-semibold tracking-tight hover:underline"
+                {isLoading &&
+                  skeletonItems.map((_, idx) => (
+                    <article
+                      key={`skeleton-${idx}`}
+                      className="rounded-2xl border border-slate-200 bg-white/70 px-4 py-4 md:px-5 md:py-5 shadow-sm"
+                    >
+                      <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+                        <div className="space-y-2 w-full">
+                          <Skeleton className="h-5 w-3/4" />
+                          <Skeleton className="h-3 w-1/2" />
+                        </div>
+                        <Skeleton className="h-6 w-40 rounded-full" />
+                      </div>
+                      <div className="mt-3 space-y-2">
+                        <Skeleton className="h-3 w-full" />
+                        <Skeleton className="h-3 w-11/12" />
+                        <Skeleton className="h-3 w-4/5" />
+                      </div>
+                      <div className="mt-4 rounded-xl px-3 py-3 bg-slate-100 space-y-2">
+                        <Skeleton className="h-4 w-1/3" />
+                        <Skeleton className="h-3 w-full" />
+                        <Skeleton className="h-3 w-5/6" />
+                      </div>
+                    </article>
+                  ))}
+
+                {!isLoading &&
+                  papers.map((paper) => (
+                    <article
+                      key={paper.id}
+                      className="rounded-2xl border border-slate-200 bg-white/70 px-4 py-4 md:px-5 md:py-5 shadow-sm"
+                    >
+                      <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+                        <div>
+                          <a
+                            href={paper.url || "#"}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-base md:text-lg font-semibold tracking-tight hover:underline"
+                          >
+                            {paper.title || "Untitled paper"}
+                          </a>
+                          <p className="mt-1 text-xs text-slate-600">
+                            {paper.authors.join(", ") || "Unknown authors"}
+                            {paper.year && (
+                              <>
+                                , <span>{paper.year}</span>
+                              </>
+                            )}
+                            {paper.venue && (
+                              <>
+                                {" "}
+                                | <span className="italic">{paper.venue}</span>
+                              </>
+                            )}
+                          </p>
+                        </div>
+                        <Badge
+                          variant="outline"
+                          className="mt-1 inline-flex items-center shrink-0 rounded-full border-slate-200 bg-slate-50 px-2 py-0.5 text-[10px] sm:text-[11px] uppercase tracking-wide text-slate-500"
                         >
-                          {paper.title || "Untitled paper"}
-                        </a>
-                        <p className="mt-1 text-xs text-slate-600">
-                          {paper.authors.join(", ") || "Unknown authors"}
-                          {paper.year && (
-                            <>
-                              {" "}
-                              · <span>{paper.year}</span>
-                            </>
-                          )}
-                          {paper.venue && (
-                            <>
-                              {" "}
-                              · <span className="italic">{paper.venue}</span>
-                            </>
-                          )}
+                          Abstract-based summary
+                        </Badge>
+                      </div>
+
+                      {paper.summary && (
+                        <p className="mt-3 text-sm text-slate-700 leading-relaxed text-left">
+                          {paper.summary}
                         </p>
-                      </div>
-                      <span className="mt-1 inline-flex h-6 items-center rounded-full border border-slate-200 px-2 text-[11px] uppercase tracking-wide text-slate-500 bg-slate-50">
-                        Abstract-based summary
-                      </span>
-                    </div>
+                      )}
 
-                    {paper.summary && (
-                      <p className="mt-3 text-sm text-slate-700 leading-relaxed">
-                        {paper.summary}
-                      </p>
-                    )}
+                      {(paper.apaCitation || paper.bibtexCitation) && (
+                        <Accordion
+                          type="single"
+                          collapsible
+                          className="mt-4 rounded-xl px-3 bg-slate-100"
+                        >
+                          <AccordionItem value={`citations-${paper.id}`}>
+                            <AccordionTrigger className="text-xs font-semibold text-slate-700 px-0 items-center">
+                              <span className="leading-none text-sm">
+                                Citations
+                              </span>
+                              <span className="ml-auto mr-1 text-[11px] font-normal text-slate-500 leading-none">
+                                Expand
+                              </span>
+                            </AccordionTrigger>
+                            <AccordionContent>
+                              <div className="space-y-3 text-xs">
+                                {paper.apaCitation && (
+                                  <div>
+                                    <div className="relative">
+                                      <div className="rounded-md bg-white px-3 py-2 text-[11px] leading-relaxed pr-10">
+                                        <div className="mb-1 flex items-center justify-between">
+                                          <span className="font-semibold text-xs">
+                                            APA
+                                          </span>
+                                        </div>
+                                        {paper.apaCitation}
+                                      </div>
+                                      <CopyButton value={paper.apaCitation!} />
+                                    </div>
+                                  </div>
+                                )}
 
-                    {/* Citations */}
-                    <details className="mt-4 group">
-                      <summary className="cursor-pointer text-xs font-medium text-slate-700 flex items-center gap-1">
-                        <span className="group-open:rotate-90 transition-transform">
-                          ▶
-                        </span>
-                        Citations
-                      </summary>
-                      <div className="mt-2 space-y-3 text-xs">
-                        {paper.apaCitation && (
-                          <div>
-                            <div className="mb-1 flex items-center justify-between">
-                              <span className="font-semibold">APA</span>
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  copyToClipboard(paper.apaCitation!)
-                                }
-                                className="text-[11px] text-slate-500 hover:text-slate-800"
-                              >
-                                Copy
-                              </button>
-                            </div>
-                            <p className="rounded-md bg-slate-50 px-3 py-2 text-[11px] leading-relaxed">
-                              {paper.apaCitation}
-                            </p>
-                          </div>
-                        )}
-                        {paper.bibtexCitation && (
-                          <div>
-                            <div className="mb-1 flex items-center justify-between">
-                              <span className="font-semibold">BibTeX</span>
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  copyToClipboard(paper.bibtexCitation!)
-                                }
-                                className="text-[11px] text-slate-500 hover:text-slate-800"
-                              >
-                                Copy
-                              </button>
-                            </div>
-                            <pre className="rounded-md bg-slate-50 px-3 py-2 text-[11px] leading-relaxed overflow-x-auto">
-                              {paper.bibtexCitation}
-                            </pre>
-                          </div>
-                        )}
-                      </div>
-                    </details>
-                  </article>
-                ))}
+                                {paper.bibtexCitation && (
+                                  <div>
+                                    <div className="relative">
+                                      <pre className="rounded-md bg-white px-3 py-2 text-[11px] leading-relaxed overflow-x-auto pr-10">
+                                        <div className="mb-1 flex items-center justify-between">
+                                          <span className="font-semibold text-xs">
+                                            BibTeX
+                                          </span>
+                                        </div>
+                                        {paper.bibtexCitation}
+                                      </pre>
+                                      <CopyButton
+                                        value={paper.bibtexCitation!}
+                                      />
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </AccordionContent>
+                          </AccordionItem>
+                        </Accordion>
+                      )}
+                    </article>
+                  ))}
               </div>
             </div>
           </section>
