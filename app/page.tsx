@@ -247,7 +247,7 @@ export default function HomePage() {
                       </div>
 
                       {paper.summary && (
-                        <p className="mt-3 text-sm text-slate-700 leading-relaxed text-justify">
+                        <p className="mt-3 text-sm text-slate-700 leading-relaxed text-left">
                           {paper.summary}
                         </p>
                       )}
