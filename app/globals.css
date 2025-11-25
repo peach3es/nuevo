@@ -3,6 +3,20 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Forest Study palette */
+@theme {
+  --color-app-bg: #f4f6f4; /* Fog – app background */
+  --color-app-card: #ffffff; /* White – cards */
+  --color-app-border: #d3ddd5; /* Soft Sage – borders */
+  --color-app-ink: #10231a; /* Dark Evergreen – main text */
+  --color-app-muted: #5b6b63; /* Moss Ink – secondary text */
+
+  --color-app-primary: #0f766e; /* Deep Teal – primary buttons/links */
+  --color-app-primary-hover: #115e57; /* Darker teal for hover */
+  --color-app-accent: #9caea4; /* Sage – subtle accents */
+  --color-app-accent-bg: #e5f2ea; /* Pale Sage – badges/pills */
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
