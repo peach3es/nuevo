@@ -13,6 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
+import { FlipWords } from "@/components/ui/flip-words";
 
 import { Copy, Check } from "lucide-react";
 
@@ -113,6 +114,7 @@ export default function HomePage() {
   }
 
   const skeletonItems = Array.from({ length: 3 });
+  const heroWords = ["real", "medical", "relevant", "academic"];
 
   return (
     <div className="min-h-screen bg-app-bg text-app-ink flex flex-col">
@@ -138,14 +140,16 @@ export default function HomePage() {
       <main className="flex-1">
         <section className="mx-auto max-w-5xl px-4 pt-12 pb-10">
           {/* Hero */}
-          <div className="max-w-2xl">
+          <div className="max-w-3xl">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-              Real research papers. Clean summaries. Instant citations.
+              Find
+              <FlipWords words={heroWords} />
+              papers. Understand them fast. Ready-to-paste citations.
             </h1>
             <p className="text-base md:text-lg text-app-muted mb-6">
-              Type what you&apos;re researching and Inflo will pull real papers
-              from scholarly databases, summarize them based on their abstracts,
-              and give you ready-to-paste citations.
+              Nuevo searches across scholarly databases, writes concise
+              abstract-based summaries, and formats citations for you, so you
+              spend less time hunting PDFs and more time doing research.
             </p>
           </div>
 

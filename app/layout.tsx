@@ -13,8 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Research Paper Search Tool",
-  description: "A web application for searching and discovering research papers.",
+  title: "Nuevo - AI-powered research helper",
+  description:
+    "A web application for searching and discovering research papers.",
 };
 
 export default function RootLayout({
