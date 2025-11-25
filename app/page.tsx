@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState, useEffect, useRef } from "react";
+
 import { Button } from "@/components/ui/button";
 import {
   Accordion,
@@ -10,6 +11,8 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/ui/spinner";
+
 import { Copy, Check } from "lucide-react";
 
 import type { Paper } from "@/types/paper";
@@ -164,7 +167,14 @@ export default function HomePage() {
               disabled={isLoading}
               className="inline-flex items-center justify-center rounded-2xl h-full bg-app-primary px-5 py-3 text-sm font-medium text-primary-foreground shadow-sm disabled:opacity-60 disabled:cursor-not-allowed hover:bg-app-primary-hover"
             >
-              {isLoading ? "Searching…" : "Search papers"}
+              {isLoading ? (
+                <span className="inline-flex items-center gap-2">
+                  <Spinner className="h-5 w-5" />
+                  <span>Searching…</span>
+                </span>
+              ) : (
+                "Search papers"
+              )}
             </Button>
           </form>
 
