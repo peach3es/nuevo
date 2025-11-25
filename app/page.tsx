@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState, useEffect, useRef } from "react";
+import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -118,11 +119,14 @@ export default function HomePage() {
       {/* Top nav */}
       <header className="border-b border-app-border bg-app-card/70 backdrop-blur sticky top-0 z-10">
         <div className="mx-auto max-w-5xl px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-app-ink text-xs font-semibold">
-              in
-            </span>
-            <span className="font-semibold tracking-tight">Nuevo</span>
+          <div className="flex items-center">
+            <Image
+              src="/logo/logo_full_g_nobg.png"
+              alt="Nuevo logo"
+              width={144}
+              height={144}
+              className="h-fit w-36 object-contain "
+            />
           </div>
           <span className="text-xs text-app-muted">
             AI-powered research helper - v1.0.0
@@ -135,7 +139,7 @@ export default function HomePage() {
         <section className="mx-auto max-w-5xl px-4 pt-12 pb-10">
           {/* Hero */}
           <div className="max-w-2xl">
-            <h1 className="text-4xl md:text-5xl font-semibold tracking-tight mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
               Real research papers. Clean summaries. Instant citations.
             </h1>
             <p className="text-base md:text-lg text-app-muted mb-6">
@@ -156,7 +160,7 @@ export default function HomePage() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="e.g. two-phase immersion cooling for AI data centers"
-                className="w-full rounded-2xl border border-app-border bg-app-card px-4 py-3 pr-10 text-sm md:text-base shadow-sm outline-none ring-0 text-app-ink placeholder:text-app-muted/70 focus:border-app-primary focus:ring-2 focus:ring-app-primary/10 transition"
+                className="w-full rounded-2xl border border-app-border bg-app-card px-4 py-3 pr-10 text-sm md:text-base shadow-sm outline-none ring-0 text-app-ink placeholder:text-app-muted/80 focus:border-app-primary focus:ring-2 focus:ring-app-primary/10 transition"
               />
               <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-app-muted text-xs">
                 ⌘K
