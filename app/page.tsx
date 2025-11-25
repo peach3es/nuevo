@@ -143,7 +143,7 @@ export default function HomePage() {
           <div className="max-w-3xl">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
               Find
-              <FlipWords words={heroWords} />
+              <FlipWords words={heroWords} className="text-app-primary" />
               papers. Understand them fast. Ready-to-paste citations.
             </h1>
             <p className="text-base md:text-lg text-app-muted mb-6">
