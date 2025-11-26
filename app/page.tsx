@@ -147,7 +147,7 @@ export default function HomePage() {
               papers. Understand them fast. Ready-to-paste citations.
             </h1>
             <p className="text-base md:text-lg text-app-muted mb-6">
-              Nuevo searches across scholarly databases, writes concise
+              Nuevo searches across peer-reviewed databases, writes concise
               abstract-based summaries, and formats citations for you, so you
               spend less time hunting PDFs and more time doing research.
             </p>
