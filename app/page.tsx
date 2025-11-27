@@ -127,7 +127,7 @@ export default function HomePage() {
               alt="Nuevo logo"
               width={144}
               height={144}
-              className="h-fit w-36 object-contain "
+              className="h-fit w-36 object-contain"
             />
           </div>
           <span className="text-xs text-app-muted">
