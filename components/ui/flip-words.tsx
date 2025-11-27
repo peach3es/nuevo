@@ -1,11 +1,11 @@
 "use client";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, LayoutGroup } from "motion/react";
+import React, { useCallback, useEffect, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
 export const FlipWords = ({
   words,
-  duration = 3000,
+  duration = 1500,
   className,
 }: {
   words: string[];
@@ -22,10 +22,17 @@ export const FlipWords = ({
   }, [currentWord, words]);
 
   useEffect(() => {
-    if (!isAnimating)
-      setTimeout(() => {
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+    if (!isAnimating) {
+      timeoutId = setTimeout(() => {
         startAnimation();
       }, duration);
+    }
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, [isAnimating, duration, startAnimation]);
 
   return (
@@ -61,7 +68,7 @@ export const FlipWords = ({
       >
         {currentWord.split(" ").map((word, wordIndex) => (
           <motion.span
-            key={word + wordIndex}
+            key={`${word}-${wordIndex}`}
             initial={{ opacity: 0, y: 10, filter: "blur(8px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             transition={{
@@ -72,7 +79,7 @@ export const FlipWords = ({
           >
             {word.split("").map((letter, letterIndex) => (
               <motion.span
-                key={word + letterIndex}
+                key={`${word}-${letterIndex}`}
                 initial={{ opacity: 0, y: 10, filter: "blur(8px)" }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 transition={{
